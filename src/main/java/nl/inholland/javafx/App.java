@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class App extends Application {
     @Override
@@ -63,19 +63,20 @@ public class App extends Application {
             @Override
             public void changed(ObservableValue<? extends String> observableValue,
                                 String oldValue, String newValue) {
-                // logic goes here
+                loginButton.setVisible(isValidPassword(newValue));
             }
         });
 
         visiblePasswordLabel.textProperty().bind(passwordFieldProperty);
 
-        loginButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-            }
-        });
-
         window.show();
+    }
+
+    public boolean isValidPassword(String password){
+        Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(password);
+        boolean containsSpecialCharacter = matcher.find();
+
+        return password.matches(".*\\d.*") && containsSpecialCharacter && password.length() >= 8;
     }
 }
